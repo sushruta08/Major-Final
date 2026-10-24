@@ -1,0 +1,31 @@
+# ── Security Engine Dockerfile ───────────────────────────────
+FROM python:3.11-slim
+
+ENV PYTHONDONTWRITEBYTECODE=1 \
+    PYTHONUNBUFFERED=1
+
+WORKDIR /app
+
+# Install system dependencies + security tools
+RUN apt-get update && apt-get install -y --no-install-recommends \
+    gcc \
+    curl \
+    git \
+    wget \
+    && rm -rf /var/lib/apt/lists/*
+
+# Install Trivy
+RUN curl -sfL https://raw.githubusercontent.com/aquasecurity/trivy/main/contrib/install.sh \
+    | sh -s -- -b /usr/local/bin v0.49.1
+
+# Install Gitleaks
+RUN curl -sSfL https://github.com/gitleaks/gitleaks/releases/download/v8.18.2/gitleaks_8.18.2_linux_x64.tar.gz \
+    | tar -xz -C /usr/local/bin gitleaks
+
+# Install Python packages
+COPY requirements-engine.txt .
+RUN pip install --no-cache-dir -r requirements-engine.txt
+
+COPY . .
+
+CMD ["python", "pipeline_runner.py"]

@@ -1,0 +1,70 @@
+# ── Python ────────────────────────────────────────────────
+__pycache__/
+*.py[cod]
+*$py.class
+*.so
+.Python
+venv/
+env/
+ENV/
+.venv/
+*.egg-info/
+dist/
+build/
+*.egg
+.pytest_cache/
+.coverage
+htmlcov/
+.mypy_cache/
+*.pyo
+
+# ── Node / Frontend ───────────────────────────────────────
+node_modules/
+frontend/dist/
+frontend/.vite/
+*.log
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+.pnpm-debug.log*
+
+# ── Environment & Secrets ─────────────────────────────────
+.env
+.env.local
+.env.*.local
+*.pem
+*.key
+*.cert
+secrets/
+
+# ── Database ──────────────────────────────────────────────
+*.db
+*.sqlite
+*.sqlite3
+test.db
+integration_test.db
+postgres_data/
+
+# ── Docker ────────────────────────────────────────────────
+docker/nginx/certs/
+
+# ── IDE ───────────────────────────────────────────────────
+.vscode/
+.idea/
+*.swp
+*.swo
+.DS_Store
+Thumbs.db
+
+# ── Security Reports ──────────────────────────────────────
+*-report.json
+trivy-*.json
+bandit-*.json
+semgrep-*.json
+safety-*.json
+gitleaks-report.json
+
+# ── Uploads / Generated ───────────────────────────────────
+uploads/
+reports/generated/
+*.pdf

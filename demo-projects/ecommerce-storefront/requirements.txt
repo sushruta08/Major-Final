@@ -1,0 +1,10 @@
+# Some outdated packages
+Flask==2.3.2
+SQLAlchemy==1.4.46  # CVE-2023-30608 (medium)
+Jinja2==3.1.2
+requests==2.28.2  # CVE-2023-32681 (medium)
+urllib3==1.26.14  # CVE-2023-43804 (high)
+certifi==2022.12.7  # CVE-2023-37920 (high)
+Werkzeug==2.3.6
+itsdangerous==2.1.2
+click==8.1.7

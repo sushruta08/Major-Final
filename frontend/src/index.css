@@ -1,0 +1,175 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+@layer base {
+  :root {
+    --background: 222.2 84% 4.9%;
+    --foreground: 210 40% 98%;
+    --card: 222.2 84% 4.9%;
+    --card-foreground: 210 40% 98%;
+    --border: 217.2 32.6% 17.5%;
+    --input: 217.2 32.6% 17.5%;
+    --primary: 199 89% 48%;
+    --primary-foreground: 222.2 47.4% 11.2%;
+    --muted: 217.2 32.6% 17.5%;
+    --muted-foreground: 215 20.2% 65.1%;
+    --accent: 217.2 32.6% 17.5%;
+    --accent-foreground: 210 40% 98%;
+  }
+
+  * {
+    @apply border-slate-700;
+  }
+
+  html {
+    scroll-behavior: smooth;
+  }
+
+  body {
+    @apply bg-dark-950 text-slate-100 font-sans antialiased;
+    background-image: radial-gradient(ellipse at top left, rgba(14, 165, 233, 0.05) 0%, transparent 50%),
+                      radial-gradient(ellipse at bottom right, rgba(139, 92, 246, 0.05) 0%, transparent 50%);
+    background-attachment: fixed;
+  }
+
+  ::-webkit-scrollbar {
+    width: 6px;
+    height: 6px;
+  }
+
+  ::-webkit-scrollbar-track {
+    @apply bg-dark-900;
+  }
+
+  ::-webkit-scrollbar-thumb {
+    @apply bg-dark-600 rounded-full;
+  }
+
+  ::-webkit-scrollbar-thumb:hover {
+    @apply bg-dark-500;
+  }
+}
+
+@layer components {
+  .glass-card {
+    @apply bg-dark-800/60 backdrop-blur-md border border-dark-700/50 rounded-xl;
+  }
+
+  .glass-card-hover {
+    @apply glass-card hover:bg-dark-800/80 hover:border-cyber-500/30 transition-all duration-300;
+  }
+
+  .cyber-gradient {
+    background: linear-gradient(135deg, #0ea5e9 0%, #8b5cf6 100%);
+  }
+
+  .cyber-text {
+    background: linear-gradient(135deg, #0ea5e9, #8b5cf6);
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    background-clip: text;
+  }
+
+  .cyber-border {
+    @apply border border-cyber-500/30;
+  }
+
+  .glow-blue {
+    box-shadow: 0 0 20px rgba(14, 165, 233, 0.3);
+  }
+
+  .glow-purple {
+    box-shadow: 0 0 20px rgba(139, 92, 246, 0.3);
+  }
+
+  .glow-green {
+    box-shadow: 0 0 20px rgba(34, 197, 94, 0.3);
+  }
+
+  .glow-red {
+    box-shadow: 0 0 20px rgba(239, 68, 68, 0.3);
+  }
+
+  .status-critical {
+    @apply text-red-400 bg-red-500/10 border border-red-500/20;
+  }
+
+  .status-high {
+    @apply text-orange-400 bg-orange-500/10 border border-orange-500/20;
+  }
+
+  .status-medium {
+    @apply text-yellow-400 bg-yellow-500/10 border border-yellow-500/20;
+  }
+
+  .status-low {
+    @apply text-blue-400 bg-blue-500/10 border border-blue-500/20;
+  }
+
+  .status-info {
+    @apply text-slate-400 bg-slate-500/10 border border-slate-500/20;
+  }
+
+  .btn-primary {
+    @apply bg-cyber-600 hover:bg-cyber-500 text-white px-4 py-2 rounded-lg font-medium transition-all duration-200 hover:shadow-lg hover:shadow-cyber-500/25;
+  }
+
+  .btn-secondary {
+    @apply bg-dark-700 hover:bg-dark-600 text-slate-200 px-4 py-2 rounded-lg font-medium transition-all duration-200 border border-dark-600 hover:border-dark-500;
+  }
+
+  .btn-danger {
+    @apply bg-red-600/20 hover:bg-red-600/30 text-red-400 px-4 py-2 rounded-lg font-medium transition-all duration-200 border border-red-600/30;
+  }
+
+  .input-dark {
+    @apply bg-dark-800 border border-dark-600 text-slate-100 placeholder-slate-500 rounded-lg px-3 py-2 focus:outline-none focus:ring-2 focus:ring-cyber-500/50 focus:border-cyber-500/50 transition-all duration-200;
+  }
+
+  .nav-item {
+    @apply flex items-center gap-3 px-3 py-2.5 rounded-lg text-slate-400 hover:text-slate-100 hover:bg-dark-700/60 transition-all duration-200 cursor-pointer;
+  }
+
+  .nav-item-active {
+    @apply nav-item text-cyber-400 bg-cyber-500/10 border border-cyber-500/20;
+  }
+
+  .metric-card {
+    @apply glass-card p-5 hover:border-cyber-500/30 hover:shadow-lg hover:shadow-cyber-500/5 transition-all duration-300;
+  }
+
+  .scan-running {
+    animation: scanPulse 1.5s ease-in-out infinite;
+  }
+
+  .pipeline-line {
+    @apply w-0.5 bg-gradient-to-b from-cyber-500 to-transparent;
+  }
+}
+
+@layer utilities {
+  .text-shadow-glow {
+    text-shadow: 0 0 10px currentColor;
+  }
+
+  .bg-grid {
+    background-image: linear-gradient(rgba(14, 165, 233, 0.05) 1px, transparent 1px),
+                      linear-gradient(90deg, rgba(14, 165, 233, 0.05) 1px, transparent 1px);
+    background-size: 30px 30px;
+  }
+
+  .bg-dots {
+    background-image: radial-gradient(rgba(14, 165, 233, 0.15) 1px, transparent 1px);
+    background-size: 20px 20px;
+  }
+}
+
+@keyframes scanPulse {
+  0%, 100% { opacity: 1; }
+  50% { opacity: 0.5; }
+}
+
+.light body {
+  @apply bg-slate-50 text-slate-900;
+}

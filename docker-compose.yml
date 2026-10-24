@@ -1,0 +1,161 @@
+version: "3.9"
+
+# ============================================================
+# SecureCI — Security Automation Framework
+# Docker Compose — Full Stack Development Environment
+# ============================================================
+
+services:
+
+  # ── Frontend ─────────────────────────────────────────────
+  frontend:
+    build:
+      context: ./frontend
+      dockerfile: ../docker/Dockerfile.frontend
+    container_name: secureci-frontend
+    ports:
+      - "3000:3000"
+    environment:
+      - VITE_API_URL=http://localhost:8000/api/v1
+    volumes:
+      - ./frontend:/app
+      - /app/node_modules
+    depends_on:
+      - backend
+    networks:
+      - secureci-net
+    restart: unless-stopped
+
+  # ── Backend API ───────────────────────────────────────────
+  backend:
+    build:
+      context: ./backend
+      dockerfile: ../docker/Dockerfile.backend
+    container_name: secureci-backend
+    ports:
+      - "8000:8000"
+    environment:
+      - DATABASE_URL=postgresql://secureci:secureci_pass@postgres:5432/secureci
+      - REDIS_URL=redis://redis:6379/0
+      - SECRET_KEY=dev-secret-key-change-in-prod-32chars!!
+      - ENVIRONMENT=development
+      - DEBUG=true
+    volumes:
+      - ./backend:/app
+    depends_on:
+      postgres:
+        condition: service_healthy
+      redis:
+        condition: service_healthy
+    networks:
+      - secureci-net
+    restart: unless-stopped
+    command: uvicorn app.main:app --host 0.0.0.0 --port 8000 --reload
+
+  # ── Celery Worker ─────────────────────────────────────────
+  celery-worker:
+    build:
+      context: ./backend
+      dockerfile: ../docker/Dockerfile.backend
+    container_name: secureci-worker
+    environment:
+      - DATABASE_URL=postgresql://secureci:secureci_pass@postgres:5432/secureci
+      - REDIS_URL=redis://redis:6379/0
+      - SECRET_KEY=dev-secret-key-change-in-prod-32chars!!
+    volumes:
+      - ./backend:/app
+      - ./security-engine:/security-engine
+    depends_on:
+      - redis
+      - postgres
+    networks:
+      - secureci-net
+    restart: unless-stopped
+    command: celery -A app.workers.celery_app worker --loglevel=info --concurrency=4
+
+  # ── Security Engine ───────────────────────────────────────
+  security-engine:
+    build:
+      context: ./security-engine
+      dockerfile: ../docker/Dockerfile.security-engine
+    container_name: secureci-engine
+    environment:
+      - REDIS_URL=redis://redis:6379/0
+    volumes:
+      - ./security-engine:/app
+      - /var/run/docker.sock:/var/run/docker.sock
+    depends_on:
+      - redis
+    networks:
+      - secureci-net
+    restart: unless-stopped
+
+  # ── PostgreSQL ────────────────────────────────────────────
+  postgres:
+    image: postgres:15-alpine
+    container_name: secureci-postgres
+    environment:
+      POSTGRES_USER: secureci
+      POSTGRES_PASSWORD: secureci_pass
+      POSTGRES_DB: secureci
+    ports:
+      - "5432:5432"
+    volumes:
+      - postgres_data:/var/lib/postgresql/data
+      - ./database/init.sql:/docker-entrypoint-initdb.d/init.sql
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U secureci"]
+      interval: 5s
+      timeout: 5s
+      retries: 5
+    networks:
+      - secureci-net
+    restart: unless-stopped
+
+  # ── Redis ─────────────────────────────────────────────────
+  redis:
+    image: redis:7-alpine
+    container_name: secureci-redis
+    ports:
+      - "6379:6379"
+    volumes:
+      - redis_data:/data
+    healthcheck:
+      test: ["CMD", "redis-cli", "ping"]
+      interval: 5s
+      timeout: 3s
+      retries: 5
+    networks:
+      - secureci-net
+    restart: unless-stopped
+    command: redis-server --appendonly yes
+
+  # ── Nginx Reverse Proxy ───────────────────────────────────
+  nginx:
+    image: nginx:alpine
+    container_name: secureci-nginx
+    ports:
+      - "80:80"
+      - "443:443"
+    volumes:
+      - ./docker/nginx/nginx.conf:/etc/nginx/nginx.conf:ro
+      - ./docker/nginx/certs:/etc/nginx/certs:ro
+    depends_on:
+      - frontend
+      - backend
+    networks:
+      - secureci-net
+    restart: unless-stopped
+
+
+# ── Networks ──────────────────────────────────────────────
+networks:
+  secureci-net:
+    driver: bridge
+
+# ── Volumes ───────────────────────────────────────────────
+volumes:
+  postgres_data:
+    driver: local
+  redis_data:
+    driver: local

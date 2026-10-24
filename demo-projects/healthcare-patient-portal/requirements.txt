@@ -1,0 +1,10 @@
+# Intentionally outdated/vulnerable packages for demonstration
+Flask==2.0.1  # CVE-2023-30861 (CRITICAL)
+Jinja2==2.11.3  # CVE-2024-22195 (HIGH)
+Werkzeug==2.0.0  # CVE-2023-25577 (HIGH)
+requests==2.25.1  # CVE-2023-32681
+urllib3==1.26.4  # CVE-2023-43804
+PyYAML==5.3.1  # CVE-2020-14343 (unsafe load)
+cryptography==3.3.2  # CVE-2023-49083 (HIGH)
+paramiko==2.7.1  # CVE-2022-24302
+Pillow==8.0.0  # CVE-2023-50447 (CRITICAL)

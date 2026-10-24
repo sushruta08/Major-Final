@@ -1,0 +1,6 @@
+.venv/
+demo.db
+__pycache__/
+*.pyc
+bandit-report.json
+pip-audit.json
