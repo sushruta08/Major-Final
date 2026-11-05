@@ -24,12 +24,25 @@ class Settings(BaseSettings):
     # Redis (optional — only needed for Celery workers)
     REDIS_URL: str = "redis://localhost:6379/0"
 
-    # CORS — allow frontend dev server
+    # CORS — allow frontend dev server and any Render deployment
     ALLOWED_ORIGINS: List[str] = [
         "http://localhost:3000",
         "http://localhost:5173",
         "http://127.0.0.1:3000",
+        "https://secureci-frontend.onrender.com",
     ]
+
+    @property
+    def cors_origins(self) -> List[str]:
+        """
+        Merge static origins with any extra ones supplied via the
+        ALLOWED_ORIGINS env var (comma-separated) at runtime.
+        This lets Render inject the real URL without code changes.
+        """
+        import os
+        extra = os.environ.get("ALLOWED_ORIGINS", "")
+        extras = [o.strip() for o in extra.split(",") if o.strip()]
+        return list(dict.fromkeys(self.ALLOWED_ORIGINS + extras))
 
     # Notifications (optional)
     SMTP_HOST: str = ""

@@ -32,6 +32,8 @@ yarn-error.log*
 .env
 .env.local
 .env.*.local
+frontend/.env
+backend/.env
 *.pem
 *.key
 *.cert
@@ -41,9 +43,12 @@ secrets/
 *.db
 *.sqlite
 *.sqlite3
+*.db-shm
+*.db-wal
 test.db
 integration_test.db
 postgres_data/
+backend/secureci.db
 
 # ── Docker ────────────────────────────────────────────────
 docker/nginx/certs/

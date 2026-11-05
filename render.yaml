@@ -1,0 +1,58 @@
+# ============================================================
+# SecureCI — Render.com Infrastructure as Code
+# Deploys: Backend (Web Service) + Frontend (Static Site)
+# PostgreSQL is provisioned as a managed Render database
+# ============================================================
+
+services:
+  # ── Backend API ───────────────────────────────────────────
+  - type: web
+    name: secureci-backend
+    runtime: python
+    rootDir: backend
+    buildCommand: pip install -r requirements.txt
+    startCommand: uvicorn app.main:app --host 0.0.0.0 --port $PORT
+    plan: free
+    healthCheckPath: /health
+    envVars:
+      - key: DATABASE_URL
+        fromDatabase:
+          name: secureci-db
+          property: connectionString
+      - key: SECRET_KEY
+        generateValue: true
+      - key: ENVIRONMENT
+        value: production
+      - key: DEBUG
+        value: "false"
+      - key: ALGORITHM
+        value: HS256
+      - key: ACCESS_TOKEN_EXPIRE_MINUTES
+        value: "1440"
+      - key: ALLOWED_ORIGINS
+        value: https://secureci-frontend.onrender.com
+      - key: PYTHON_VERSION
+        value: "3.11.0"
+
+  # ── Frontend Static Site ──────────────────────────────────
+  - type: web
+    name: secureci-frontend
+    runtime: static
+    rootDir: frontend
+    buildCommand: npm install && npm run build
+    staticPublishPath: dist
+    plan: free
+    envVars:
+      - key: VITE_API_URL
+        value: https://secureci-backend.onrender.com/api/v1
+    routes:
+      - type: rewrite
+        source: /*
+        destination: /index.html
+
+# ── PostgreSQL Database ───────────────────────────────────
+databases:
+  - name: secureci-db
+    plan: free
+    databaseName: secureci
+    user: secureci

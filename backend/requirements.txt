@@ -18,9 +18,8 @@ python-multipart==0.0.9
 redis==5.0.1
 celery==5.3.6
 
-# Security Scanners
+# Security Scanners (lightweight — semgrep excluded for cloud deploy)
 bandit==1.7.7
-semgrep==1.59.1
 safety==3.0.1
 
 # Container / Git
@@ -32,8 +31,3 @@ httpx==0.26.0
 python-dotenv==1.0.1
 aiofiles==23.2.1
 pyyaml==6.0.1
-
-# Testing
-pytest==8.0.1
-pytest-asyncio==0.23.5
-httpx==0.26.0
